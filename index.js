@@ -57,27 +57,6 @@ dropDownListFormButton.addEventListener('click', (event) => {
     statusContainer.textContent = dataLoading;
     dropDownListFormButton.disabled = true;
 
-    //request API to translate breed
-    fetch('https://google-translate1.p.rapidapi.com/language/translate/v2', {
-        method: 'POST',
-        headers: {
-            'content-type': 'application/x-www-form-urlencoded',
-            'Accept-Encoding': 'application/gzip',
-            'X-RapidAPI-Key': TRANSLATOR_API_KEY,
-            'X-RapidAPI-Host': 'google-translate1.p.rapidapi.com'
-        },
-        body: new URLSearchParams({
-            q: selectedCatName,
-            target: 'ru',
-            source: 'en'
-        })
-    })
-        .then(response => response.json())
-        .then(result => {
-            translatedCatBreed = result.data.translations[0].translatedText;
-            statusContainer.textContent = `Вы выбрали породу ${translatedCatBreed}. ` + dataLoading;
-        })
-
     //request API for cat images
     fetch(`https://api.thecatapi.com/v1/images/search?limit=10&breed_ids=${selectedCatId}&api_key=${THE_CAT_API_KEY}`)
         .then(response => response.json())
@@ -92,7 +71,7 @@ dropDownListFormButton.addEventListener('click', (event) => {
             statusContainer.textContent = error
         })
         .finally(() => {
-            statusContainer.textContent = `Вы выбрали породу ${translatedCatBreed}. ` + dataLoaded;
+            statusContainer.textContent = `Вы выбрали породу ${selectedCatName}. ` + dataLoaded;
             dropDownListFormButton.disabled = false;
         })
 })
