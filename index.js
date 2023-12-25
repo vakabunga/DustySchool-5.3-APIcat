@@ -1,5 +1,7 @@
 const dataLoading = 'Подождите, данные загружаются';
 const dataLoaded = 'Данные успешно загружены';
+const dataNotLoaded = 'Не все данные загружены, повторите попытку';
+let dataLoadingResult;
 
 //create container for cat app
 const catsContainer = document.createElement('div');
@@ -57,21 +59,39 @@ dropDownListFormButton.addEventListener('click', (event) => {
     statusContainer.textContent = dataLoading;
     dropDownListFormButton.disabled = true;
 
+
     //request API for cat images
     fetch(`https://api.thecatapi.com/v1/images/search?limit=10&breed_ids=${selectedCatId}&api_key=${THE_CAT_API_KEY}`)
         .then(response => response.json())
         .then(data => {
+            const imgLoadPromises = [];
+
             for (let i = 0; i < data.length; i++) {
                 const catImage = document.createElement('img');
                 catImage.src = data[i].url;
                 imageContainer.appendChild(catImage);
+                imgLoadPromises.push(new Promise((resolve) => {
+                    catImage.addEventListener('load', () => {
+                        resolve(true);
+                    });
+                }))
             }
+
+            Promise.all(imgLoadPromises)
+                .then((result) => {
+                    if (result.every(element => element === true)) {
+                        statusContainer.textContent += dataLoaded;
+                    } else {
+                        statusContainer.textContent += dataNotLoaded;
+                    }
+                })
         })
         .catch(error => {
-            statusContainer.textContent = error
+            statusContainer.textContent = error;
         })
         .finally(() => {
-            statusContainer.textContent = `Вы выбрали породу ${selectedCatName}. ` + dataLoaded;
+            statusContainer.textContent = `Вы выбрали породу ${selectedCatName}. `;
             dropDownListFormButton.disabled = false;
         })
-})
+
+});
