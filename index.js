@@ -77,14 +77,14 @@ dropDownListFormButton.addEventListener('click', (event) => {
                 }))
             }
 
-            Promise.all(imgLoadPromises)
-                .then((result) => {
-                    if (result.every(element => element === true)) {
-                        statusContainer.textContent += dataLoaded;
-                    } else {
-                        statusContainer.textContent += dataNotLoaded;
-                    }
-                })
+            return Promise.all(imgLoadPromises);
+        })
+        .then((result) => {
+            if (result.every(element => element === true)) {
+                statusContainer.textContent += dataLoaded;
+            } else {
+                statusContainer.textContent += dataNotLoaded;
+            }
         })
         .catch(error => {
             statusContainer.textContent = error;
